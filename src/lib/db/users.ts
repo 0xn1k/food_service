@@ -7,7 +7,9 @@ const COLLECTION_NAME = 'users';
 
 export async function createUser(userData: Omit<User, '_id' | 'createdAt' | 'updatedAt'>): Promise<User> {
   const db = await getDatabase();
-  const hashedPassword = await bcrypt.hash(userData.password, 10);
+
+  // Only hash password if it's not empty (for OAuth users, password is empty)
+  const hashedPassword = userData.password ? await bcrypt.hash(userData.password, 10) : '';
 
   const user: Omit<User, '_id'> = {
     ...userData,
